@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="{% static 'todo/style.css' %}">
+</head>
+<body>
+    <h1>Списък със задачи</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="title" placeholder="Нова задача" required>
+        <button type="submit">Добави</button>
+    </form>
+
+
+    <ul>
+        {% for task in tasks %}
+            <li class="{% if task.completed %}completed{% endif %}">
+                <form method="POST" action="{% url 'complete_task' task.id %}" style="display:inline">
+                    {% csrf_token %}
+                    <input type="checkbox" onchange="this.form.submit()" {% if task.completed %}checked{% endif %}>
+                    {{ task.title }}
+                </form>
+                <form method="POST" action="{% url 'delete_task' task.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="color: red;">Изтрий</button>
+            </form>
+            </li>
+        {% empty %}
+            <li>Няма добавени задачи.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
